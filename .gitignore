@@ -1,0 +1,54 @@
+## ==========================================
+## Visual Studio Build Outputs
+## ==========================================
+[Bb]in/
+[Oo]bj/
+Generated\ Files/
+
+## ==========================================
+## Visual Studio User and Cache Files
+## ==========================================
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## ==========================================
+## .NET and MSBuild artifacts
+## ==========================================
+*.userprefs
+*.pidb
+*.directory
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## ==========================================
+## Package Manager Folders
+## ==========================================
+# NuGet Packages
+packages/
+# If using paket
+.paket/
+paket-files/
+
+## ==========================================
+## Secrets and Environment Variables
+## ==========================================
+# User Secrets id (if using dotnet user-secrets)
+secrets.json
+.env
+*.pem
+*.pfx
+
+## ==========================================
+## Operating System Files
+## ==========================================
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+Desktop.ini
