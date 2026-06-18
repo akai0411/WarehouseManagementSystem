@@ -1,4 +1,6 @@
-﻿namespace WarehouseManagementSystem.Api.Middleware
+﻿using FluentValidation;
+
+namespace WarehouseManagementSystem.Api.Middleware
 {
     public class ExceptionMiddleware
     {
@@ -13,17 +15,31 @@
             {
                 await _next(context);
             }
+            catch (ValidationException ex)
+            {
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                context.Response.ContentType = "application/json";
+
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    message = "Validation failed",
+                    errors = ex.Errors.Select(e => new
+                    {
+                        field = e.PropertyName,
+                        error = e.ErrorMessage
+                    })
+                });
+            }
             catch (Exception ex)
             {
-                context.Response.StatusCode = 500;
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 context.Response.ContentType = "application/json";
-                await context.Response.WriteAsJsonAsync(
-                    System.Text.Json.JsonSerializer.Serialize(new
-                    {
-                        message = "Something went wrong",
-                        detail = ex.Message
-                    })
-                );
+
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    message = "Something went wrong",
+                    detail = ex.Message
+                });
             }
         }
     }
