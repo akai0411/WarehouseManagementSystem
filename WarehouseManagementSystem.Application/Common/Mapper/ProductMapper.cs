@@ -1,0 +1,35 @@
+﻿using WarehouseManagementSystem.Application.Features.Products.Common;
+using WarehouseManagementSystem.Application.Features.Products.CreateProduct;
+using WarehouseManagementSystem.Domain.Entities;
+
+namespace WarehouseManagementSystem.Application.Common.Mapping;
+
+public static class ProductMapper
+{
+    public static ProductDto ToDto(Product product)
+    {
+        return new ProductDto
+        {
+            Id = product.Id,
+            Name = product.Name,
+            SKU = product.SKU,
+            Description = product.Description,
+            Price = product.Price,
+            QuantityInStock = product.QuantityInStock
+        };
+    }
+
+    public static Product ToEntity(CreateProductCommand command)
+    {
+        return new Product
+        {
+            Id = Guid.NewGuid(),
+            Name = command.Name,
+            SKU = command.SKU,
+            Description = command.Description,
+            Price = command.Price,
+            QuantityInStock = command.QuantityInStock,
+            CreatedAt = DateTime.UtcNow
+        };
+    }
+}

@@ -1,46 +1,50 @@
-﻿using FluentValidation;
+﻿using System.Net;
+using System.Text.Json;
 
-namespace WarehouseManagementSystem.Api.Middleware
+public class ExceptionMiddleware
 {
-    public class ExceptionMiddleware
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionMiddleware> _logger;
+
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
-        private readonly RequestDelegate _next;
-        public ExceptionMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
-        public async Task InvokeAsync(HttpContext context)
-        {
-            try
-            {
-                await _next(context);
-            }
-            catch (ValidationException ex)
-            {
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                context.Response.ContentType = "application/json";
+        _next = next;
+        _logger = logger;
+    }
 
-                await context.Response.WriteAsJsonAsync(new
-                {
-                    message = "Validation failed",
-                    errors = ex.Errors.Select(e => new
-                    {
-                        field = e.PropertyName,
-                        error = e.ErrorMessage
-                    })
-                });
-            }
-            catch (Exception ex)
-            {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                context.Response.ContentType = "application/json";
-
-                await context.Response.WriteAsJsonAsync(new
-                {
-                    message = "Something went wrong",
-                    detail = ex.Message
-                });
-            }
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
+        {
+            await _next(context);
         }
+        catch (Exception ex)
+        {
+            await HandleExceptionAsync(context, ex);
+        }
+    }
+
+    private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+    {
+        var traceId = context.TraceIdentifier;
+
+        _logger.LogError(ex,
+            "Unhandled exception occurred. TraceId: {TraceId}, Path: {Path}",
+            traceId,
+            context.Request.Path);
+
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+        var response = new
+        {
+            success = false,
+            message = "An unexpected error occurred.",
+            traceId
+        };
+
+        var json = JsonSerializer.Serialize(response);
+
+        await context.Response.WriteAsync(json);
     }
 }

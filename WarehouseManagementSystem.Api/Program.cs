@@ -1,22 +1,49 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Features.Products.CreateProduct;
 using WarehouseManagementSystem.Application.Features.Products.DeleteProduct;
+using WarehouseManagementSystem.Application.Features.Products.GetProductById;
 using WarehouseManagementSystem.Application.Features.Products.GetProducts;
 using WarehouseManagementSystem.Application.Features.Products.UpdateProduct;
-using WarehouseManagementSystem.Application.Features.Products.GetProductById;
-using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Infrastructure.Persistence;
 using WarehouseManagementSystem.Infrastructure.Persistence.Repositories;
-using WarehouseManagementSystem.Api.Middleware;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+#region Logger
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog((ctx, lc) =>
+{
+    lc.WriteTo.Console()
+      .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day);
+});
+
+#endregion
 
 #region Controllers + Swagger
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Warehouse API",
+        Version = "v1"
+    });
+
+    // Swagger reads XML comments
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
 
 #endregion
 
@@ -31,7 +58,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 #endregion
 
 #region Repositories
+
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
 #endregion
 
 #region Handlers (Application Layer)

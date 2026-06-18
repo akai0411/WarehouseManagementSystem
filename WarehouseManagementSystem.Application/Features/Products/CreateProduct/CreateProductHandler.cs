@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using WarehouseManagementSystem.Application.Common.Exceptions;
 using WarehouseManagementSystem.Application.Common.Interface;
+using WarehouseManagementSystem.Application.Common.Mapping;
 using WarehouseManagementSystem.Application.Features.Products.CreateProduct;
 using WarehouseManagementSystem.Domain.Entities;
 
@@ -16,6 +18,8 @@ public class CreateProductHandler
 
     public async Task<Guid> Handle(CreateProductCommand request)
     {
+        #region Validation
+
         var validationResult = await _validator.ValidateAsync(request);
 
         if (!validationResult.IsValid)
@@ -23,16 +27,16 @@ public class CreateProductHandler
             throw new ValidationException(validationResult.Errors);
         }
 
-        var product = new Product
+        #endregion 
+
+        var existingProduct = await _repository.GetBySkuAsync(request.SKU);
+
+        if (existingProduct != null)
         {
-            Id = Guid.NewGuid(),
-            Name = request.Name,
-            SKU = request.SKU,
-            Description = request.Description,
-            Price = request.Price,
-            QuantityInStock = request.QuantityInStock,
-            CreatedAt = DateTime.UtcNow
-        };
+            throw new ConflictException(
+                $"A product with SKU '{request.SKU}' already exists.");
+        } 
+        var product = ProductMapper.ToEntity(request);
 
         await _repository.AddAsync(product);
 

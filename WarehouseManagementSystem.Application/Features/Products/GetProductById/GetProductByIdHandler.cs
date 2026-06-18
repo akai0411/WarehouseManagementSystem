@@ -1,6 +1,7 @@
 ﻿using WarehouseManagementSystem.Application.Common.Interface;
-using WarehouseManagementSystem.Domain.Entities;
+using WarehouseManagementSystem.Application.Common.Mapping;
 using WarehouseManagementSystem.Application.Features.Products.Common;
+using WarehouseManagementSystem.Domain.Entities;
 
 
 namespace WarehouseManagementSystem.Application.Features.Products.GetProductById
@@ -21,14 +22,7 @@ namespace WarehouseManagementSystem.Application.Features.Products.GetProductById
 
             if (product == null) return null;
 
-            return new ProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                SKU = product.SKU,
-                Price = product.Price,
-                QuantityInStock = product.QuantityInStock
-            };
+            return ProductMapper.ToDto(product);
 
         }
     }

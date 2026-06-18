@@ -16,13 +16,43 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence.Repositories
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
         }
-        public async Task<List<Product>> GetAllPagedAsync(int page, int pageSize)
+        public async Task<(List<Product> Items, int TotalCount)> GetAllAsync(GetProductsQuery query)
         {
-            return await _context.Products
-                .Where(p => !p.IsDeleted)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
+            var products = _context.Products
+                .Where(p => !p.IsDeleted);
+
+            if (!string.IsNullOrWhiteSpace(query.Name))
+                products = products.Where(p => p.Name.Contains(query.Name));
+
+            if (!string.IsNullOrWhiteSpace(query.SKU))
+                products = products.Where(p => p.SKU.Contains(query.SKU));
+
+            // COUNT BEFORE pagination (IMPORTANT)
+            var totalCount = await products.CountAsync();
+
+            products = query.SortBy?.ToLower() switch
+            {
+                "name" => query.Descending
+                    ? products.OrderByDescending(p => p.Name)
+                    : products.OrderBy(p => p.Name),
+
+                "price" => query.Descending
+                    ? products.OrderByDescending(p => p.Price)
+                    : products.OrderBy(p => p.Price),
+
+                "sku" => query.Descending
+                    ? products.OrderByDescending(p => p.SKU)
+                    : products.OrderBy(p => p.SKU),
+
+                _ => products.OrderBy(p => p.Name)
+            };
+
+            var items = await products
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
                 .ToListAsync();
+
+            return (items, totalCount);
         }
         public async Task<Product?> GetByIdAsync(Guid id)
         {
@@ -41,6 +71,12 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence.Repositories
 
             _context.Products.Update(product);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<Product?> GetBySkuAsync(string sku)
+        {
+            return await _context.Products
+                .FirstOrDefaultAsync(p => p.SKU == sku && !p.IsDeleted);
         }
     }
 }

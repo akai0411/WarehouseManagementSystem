@@ -1,7 +1,6 @@
 ﻿using WarehouseManagementSystem.Application.Common.Interface;
-using WarehouseManagementSystem.Domain.Entities;
+using WarehouseManagementSystem.Application.Common.Mapping;
 using WarehouseManagementSystem.Application.Features.Products.Common;
-
 
 namespace WarehouseManagementSystem.Application.Features.Products.GetProducts
 {
@@ -14,21 +13,24 @@ namespace WarehouseManagementSystem.Application.Features.Products.GetProducts
             _repository = repository;
         }
 
-        public async Task<List<ProductDto>> Handle(int page, int pageSize)
+        public async Task<PagedResponse<ProductDto>> Handle(GetProductsQuery query)
         {
+            var (products, totalCount) = await _repository.GetAllAsync(query);
 
-            var products = await
-                _repository.GetAllPagedAsync(page, pageSize);
+            var items = products
+                .Select(ProductMapper.ToDto)
+                .ToList();
 
-            return [.. products.Select(p => new ProductDto
+            var totalPages = (int)Math.Ceiling(totalCount / (double)query.PageSize);
+
+            return new PagedResponse<ProductDto>
             {
-                Id = p.Id,
-                Name = p.Name,
-                SKU = p.SKU,
-                Price = p.Price,
-                QuantityInStock = p.QuantityInStock
-            })];
-
+                Items = items,
+                Page = query.PageNumber,
+                PageSize = query.PageSize,
+                TotalCount = totalCount,
+                TotalPages = totalPages
+            };
         }
     }
 }
