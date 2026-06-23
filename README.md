@@ -170,7 +170,7 @@ Examples:
 ### Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/WarehouseManagementSystem.git
+git clone https://github.com/akai0411/WarehouseManagementSystem.git
 ```
 
 ### Navigate to the solution

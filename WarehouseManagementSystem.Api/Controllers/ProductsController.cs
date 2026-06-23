@@ -21,7 +21,9 @@ namespace WarehouseManagementSystem.Api.Controllers
         private readonly GetProductByIdHandler _getByIdHandler;
         private readonly UpdateProductHandler _updateHandler;
         private readonly DeleteProductHandler _deleteHandler;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProductsController"/> class.
+        /// </summary>
         public ProductsController(
             CreateProductHandler handler,
             GetProductsHandler getHandler,
