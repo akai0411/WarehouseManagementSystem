@@ -27,7 +27,7 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence.Repositories
             if (!string.IsNullOrWhiteSpace(query.SKU))
                 products = products.Where(p => p.SKU.Contains(query.SKU));
 
-            // COUNT BEFORE pagination (IMPORTANT)
+            
             var totalCount = await products.CountAsync();
 
             products = query.SortBy?.ToLower() switch

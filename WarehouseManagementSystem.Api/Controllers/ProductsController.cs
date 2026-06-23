@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WarehouseManagementSystem.Application.Features.Products.Common;
 using WarehouseManagementSystem.Application.Features.Products.CreateProduct;
 using WarehouseManagementSystem.Application.Features.Products.DeleteProduct;
@@ -43,6 +44,7 @@ namespace WarehouseManagementSystem.Api.Controllers
         /// </summary>
         /// <param name="command">Product creation data</param>
         /// <returns>The created product</returns>
+        [Authorize]
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<ProductDto>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 400)]
@@ -59,6 +61,7 @@ namespace WarehouseManagementSystem.Api.Controllers
         /// </summary>
         /// <param name="query">Filtering and pagination parameters</param>
         /// <returns>Paginated list of products</returns>
+        [Authorize]
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<PagedResponse<ProductDto>>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 500)]
@@ -74,6 +77,7 @@ namespace WarehouseManagementSystem.Api.Controllers
         /// </summary>
         /// <param name="id">Product identifier</param>
         /// <returns>The requested product</returns>
+        [Authorize]
         [HttpGet("{id:guid}")]
         [ProducesResponseType(typeof(ApiResponse<ProductDto>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 404)]
@@ -94,6 +98,7 @@ namespace WarehouseManagementSystem.Api.Controllers
         /// <param name="id">Product identifier</param>
         /// <param name="command">Updated product data</param>
         /// <returns>Update result</returns>
+        [Authorize]
         [HttpPut("{id:guid}")]
         [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 404)]
@@ -114,6 +119,7 @@ namespace WarehouseManagementSystem.Api.Controllers
         /// </summary>
         /// <param name="id">Product identifier</param>
         /// <returns>Deletion result</returns>
+        [Authorize]
         [HttpDelete("{id:guid}")]
         [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 404)]
