@@ -1,4 +1,5 @@
-﻿using WarehouseManagementSystem.Domain.Entities;
+﻿using WarehouseManagementSystem.Application.Features.Products.GetProducts;
+using WarehouseManagementSystem.Domain.Entities;
 
 namespace WarehouseManagementSystem.Application.Common.Interface
 {

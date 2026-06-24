@@ -1,29 +1,32 @@
-﻿public class ApiResponse<T>
+﻿namespace WarehouseManagementSystem.Application.Common.Responses
 {
-    public bool Success { get; set; }
-    public string? Message { get; set; }
-    public T? Data { get; set; }
-    public List<string>? Errors { get; set; }
-    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-    public static ApiResponse<T> Ok(T? data, string? message = null)
+    public class ApiResponse<T>
     {
-        return new ApiResponse<T>
+        public bool Success { get; set; }
+        public string? Message { get; set; }
+        public T? Data { get; set; }
+        public List<string>? Errors { get; set; }
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        public static ApiResponse<T> Ok(T? data, string? message = null)
         {
-            Success = true,
-            Data = data,
-            Message = message,
-            Errors = null
-        };
-    }
+            return new ApiResponse<T>
+            {
+                Success = true,
+                Data = data,
+                Message = message,
+                Errors = null
+            };
+        }
 
-    public static ApiResponse<T> Fail(string message, List<string>? errors = null)
-    {
-        return new ApiResponse<T>
+        public static ApiResponse<T> Fail(string message, List<string>? errors = null)
         {
-            Success = false,
-            Message = message,
-            Errors = errors,
-            Data = default
-        };
+            return new ApiResponse<T>
+            {
+                Success = false,
+                Message = message,
+                Errors = errors,
+                Data = default
+            };
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WarehouseManagementSystem.Application.Common.Interface;
+using WarehouseManagementSystem.Application.Features.Products.GetProducts;
 using WarehouseManagementSystem.Domain.Entities;
 
 namespace WarehouseManagementSystem.Infrastructure.Persistence.Repositories

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagementSystem.Application.Common;
+using WarehouseManagementSystem.Application.Common.Responses;
 using WarehouseManagementSystem.Application.Features.Auth.Login;
 using WarehouseManagementSystem.Application.Features.Auth.Register;
 

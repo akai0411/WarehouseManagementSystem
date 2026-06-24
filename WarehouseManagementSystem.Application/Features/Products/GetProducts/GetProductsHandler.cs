@@ -1,5 +1,6 @@
 ﻿using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Common.Mapping;
+using WarehouseManagementSystem.Application.Common.Responses;
 using WarehouseManagementSystem.Application.Features.Products.Common;
 
 namespace WarehouseManagementSystem.Application.Features.Products.GetProducts

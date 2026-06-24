@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WarehouseManagementSystem.Application.Common.Responses;
 using WarehouseManagementSystem.Application.Features.Products.Common;
 using WarehouseManagementSystem.Application.Features.Products.CreateProduct;
 using WarehouseManagementSystem.Application.Features.Products.DeleteProduct;
