@@ -28,8 +28,7 @@ public static class ProductMapper
             SKU = command.SKU,
             Description = command.Description,
             Price = command.Price,
-            QuantityInStock = command.QuantityInStock,
-            CreatedAt = DateTime.UtcNow
+            QuantityInStock = command.QuantityInStock
         };
     }
 }

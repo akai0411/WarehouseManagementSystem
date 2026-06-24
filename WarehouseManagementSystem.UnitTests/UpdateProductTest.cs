@@ -70,6 +70,10 @@ public class UpdateProductTests
         Assert.Equal(command.Price, product.Price);
         Assert.Equal(command.QuantityInStock, product.QuantityInStock);
 
+        // UpdatedAt is intentionally not asserted here
+        // it is handled by AppDbContext.SaveChangesAsync
+        // and will be covered by integration tests in V2
+
         _repositoryMock.Verify(r => r.UpdateAsync(product), Times.Once);
     }
 

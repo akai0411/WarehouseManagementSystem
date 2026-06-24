@@ -38,7 +38,6 @@ namespace WarehouseManagementSystem.Application.Features.Products.UpdateProduct
             product.Description = request.Description;
             product.Price = request.Price;
             product.QuantityInStock = request.QuantityInStock;
-            product.UpdatedAt = DateTime.UtcNow;
 
             await _repository.UpdateAsync(product);
 

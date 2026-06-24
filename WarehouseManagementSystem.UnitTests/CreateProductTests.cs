@@ -47,8 +47,15 @@ public class CreateProductTests
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
 
         _repo
-            .Setup(r => r.GetBySkuAsync(It.IsAny<string>()))
-            .ReturnsAsync(new Product());
+        .Setup(r => r.GetBySkuAsync("DUPLICATE"))
+        .ReturnsAsync(new Product
+        {
+            Id = Guid.NewGuid(),
+            Name = "Existing Product",
+            SKU = "DUPLICATE",
+            Price = 10,
+            QuantityInStock = 5
+        });
 
         var handler = new CreateProductHandler(_repo.Object, _validator.Object);
 

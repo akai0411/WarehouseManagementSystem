@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WarehouseManagementSystem.Domain.Common;
 using WarehouseManagementSystem.Domain.Entities;
 
 namespace WarehouseManagementSystem.Infrastructure.Persistence
@@ -71,6 +72,34 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence
                 entity.Property(e => e.CreatedAt)
                       .IsRequired();
             });
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker.Entries<BaseEntity>();
+
+            foreach (var entry in entries)
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        if (entry.Entity.Id == Guid.Empty)
+                            entry.Entity.Id = Guid.NewGuid();
+                        entry.Entity.CreatedAt = DateTime.UtcNow;
+                        break;
+                }
+
+                if (entry.Entity is AuditableEntity auditableEntity)
+                {
+                    if (entry.State == EntityState.Added)
+                        auditableEntity.IsDeleted = false;
+
+                    if (entry.State == EntityState.Modified)
+                        auditableEntity.UpdatedAt = DateTime.UtcNow;
+                }
+            }
+
+            return await base.SaveChangesAsync(cancellationToken);
         }
 
     }
