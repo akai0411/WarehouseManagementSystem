@@ -1,47 +1,58 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WarehouseManagementSystem.Application.Common.Interface;
-using WarehouseManagementSystem.Application.Features.Auth;
+using WarehouseManagementSystem.Application.Common;
+using WarehouseManagementSystem.Application.Features.Auth.Login;
+using WarehouseManagementSystem.Application.Features.Auth.Register;
 
 namespace WarehouseManagementSystem.Api.Controllers
 {
     /// <summary>
-    /// Handles authentication operations such as user login and token generation.
+    /// Handles user authentication operations.
     /// </summary>
     [ApiController]
     [Route("api/auth")]
     [Produces("application/json")]
     public class AuthController : ControllerBase
     {
-        private readonly ITokenService _tokenService;
-
+        private readonly RegisterHandler _registerHandler;
+        private readonly LoginHandler _loginHandler;
         /// <summary>
         /// Initializes a new instance of the AuthController.
         /// </summary>
-        /// <param name="tokenService">Service responsible for generating JWT tokens.</param>
-        public AuthController(ITokenService tokenService)
+        public AuthController(
+            RegisterHandler registerHandler,
+            LoginHandler loginHandler)
         {
-            _tokenService = tokenService;
+            _registerHandler = registerHandler;
+            _loginHandler = loginHandler;
         }
 
         /// <summary>
-        /// Authenticates a user and returns a JWT token if credentials are valid.
+        /// Registers a new user.
         /// </summary>
-        /// <param name="request">Login credentials (email and password).</param>
-        /// <returns>JWT token if authentication is successful.</returns>
-        /// <response code="200">Returns the JWT token.</response>
-        /// <response code="401">If credentials are invalid.</response>
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        [HttpPost("register")]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Register([FromBody] RegisterCommand command)
         {
-            if (request.Email != "admin@test.com" || request.Password != "1234")
-                return Unauthorized();
+            var userId = await _registerHandler.Handle(command);
 
-            var token = _tokenService.CreateToken(request.Email);
+            return Created(string.Empty,
+                ApiResponse<Guid>.Ok(userId, "User registered successfully."));
+        }
 
-            return Ok(new AuthResponse
-            {
-                Token = token
-            });
+        /// <summary>
+        /// Authenticates a user and returns a JWT token.
+        /// </summary>
+        [HttpPost("login")]
+        [ProducesResponseType(typeof(ApiResponse<LoginResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Login([FromBody] LoginCommand command)
+        {
+            var response = await _loginHandler.Handle(command);
+
+            return Ok(ApiResponse<LoginResponse>.Ok(response));
         }
     }
 }

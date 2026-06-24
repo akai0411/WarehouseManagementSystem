@@ -2,8 +2,9 @@
 
 namespace WarehouseManagementSystem.Application.Common.Interface
 {
-    public interface ITokenService
+    public interface IUserRepository
     {
-        string CreateToken(User user);
+        Task<User?> GetByEmailAsync(string email);
+        Task AddAsync(User user);
     }
 }

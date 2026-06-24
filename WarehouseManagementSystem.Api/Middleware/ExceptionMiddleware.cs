@@ -48,6 +48,10 @@ public class ExceptionMiddleware
         {
             await HandleKnownException(context, ex, HttpStatusCode.Conflict);
         }
+        catch (UnauthorizedException ex)
+        {
+            await HandleKnownException(context, ex, HttpStatusCode.Unauthorized);
+        }
         catch (Exception ex)
         {
             await HandleUnknownException(context, ex);
@@ -69,7 +73,9 @@ public class ExceptionMiddleware
         var response = new
         {
             success = false,
-            message = "Validation failed",
+            message = ex is ValidationException
+            ? "Validation failed."
+            : ex.Message,
             errors,
             traceId
         };

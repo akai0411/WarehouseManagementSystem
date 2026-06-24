@@ -6,6 +6,8 @@ using Serilog;
 using System.Reflection;
 using System.Text;
 using WarehouseManagementSystem.Application.Common.Interface;
+using WarehouseManagementSystem.Application.Features.Auth.Login;
+using WarehouseManagementSystem.Application.Features.Auth.Register;
 using WarehouseManagementSystem.Application.Features.Products.CreateProduct;
 using WarehouseManagementSystem.Application.Features.Products.DeleteProduct;
 using WarehouseManagementSystem.Application.Features.Products.GetProductById;
@@ -84,10 +86,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 #region Repositories
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 #endregion
 
 #region Security
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasherService>();
 #endregion
 
 #region Handlers (Application Layer)
@@ -96,6 +100,9 @@ builder.Services.AddScoped<GetProductsHandler>();
 builder.Services.AddScoped<GetProductByIdHandler>();
 builder.Services.AddScoped<UpdateProductHandler>();
 builder.Services.AddScoped<DeleteProductHandler>();
+
+builder.Services.AddScoped<RegisterHandler>();
+builder.Services.AddScoped<LoginHandler>();
 #endregion
 
 #region FluentValidation
