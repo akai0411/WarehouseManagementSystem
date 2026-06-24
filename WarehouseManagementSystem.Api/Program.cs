@@ -13,6 +13,11 @@ using WarehouseManagementSystem.Application.Features.Products.DeleteProduct;
 using WarehouseManagementSystem.Application.Features.Products.GetProductById;
 using WarehouseManagementSystem.Application.Features.Products.GetProducts;
 using WarehouseManagementSystem.Application.Features.Products.UpdateProduct;
+using WarehouseManagementSystem.Application.Features.Warehouses.CreateWarehouse;
+using WarehouseManagementSystem.Application.Features.Warehouses.DeleteWarehouse;
+using WarehouseManagementSystem.Application.Features.Warehouses.GetWarehouseById;
+using WarehouseManagementSystem.Application.Features.Warehouses.GetWarehouses;
+using WarehouseManagementSystem.Application.Features.Warehouses.UpdateWarehouse;
 using WarehouseManagementSystem.Infrastructure.Persistence;
 using WarehouseManagementSystem.Infrastructure.Persistence.Repositories;
 using WarehouseManagementSystem.Infrastructure.Services;
@@ -87,6 +92,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 #region Repositories
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 #endregion
 
 #region Security
@@ -94,15 +100,22 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasherService>();
 #endregion
 
-#region Handlers (Application Layer)
+#region Handlers 
+//Product
 builder.Services.AddScoped<CreateProductHandler>();
 builder.Services.AddScoped<GetProductsHandler>();
 builder.Services.AddScoped<GetProductByIdHandler>();
 builder.Services.AddScoped<UpdateProductHandler>();
 builder.Services.AddScoped<DeleteProductHandler>();
-
+//User
 builder.Services.AddScoped<RegisterHandler>();
 builder.Services.AddScoped<LoginHandler>();
+//Warehouse
+builder.Services.AddScoped<CreateWarehouseHandler>();
+builder.Services.AddScoped<GetWarehousesHandler>();
+builder.Services.AddScoped<GetWarehouseByIdHandler>();
+builder.Services.AddScoped<UpdateWarehouseHandler>();
+builder.Services.AddScoped<DeleteWarehouseHandler>();
 #endregion
 
 #region FluentValidation
