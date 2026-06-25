@@ -8,14 +8,22 @@ namespace WarehouseManagementSystem.Application.Features.Warehouses.GetWarehouse
     public class GetWarehousesHandler
     {
         private readonly IWarehouseRepository _repository;
+        private readonly ICurrentUserService _currentUser;
 
-        public GetWarehousesHandler(IWarehouseRepository repository)
+        public GetWarehousesHandler(
+            IWarehouseRepository repository,
+            ICurrentUserService currentUser)
         {
             _repository = repository;
+            _currentUser = currentUser;
         }
 
         public async Task<PagedResponse<WarehouseDto>> Handle(GetWarehousesQuery query)
         {
+            // RegionalManager only sees warehouses in their country
+            if (_currentUser.IsRegionalManager)
+                query.Country = _currentUser.Country;
+
             var (warehouses, totalCount) = await _repository.GetAllAsync(query);
 
             var items = warehouses

@@ -6,6 +6,7 @@ using Serilog;
 using System.Reflection;
 using System.Text;
 using WarehouseManagementSystem.Application.Common.Interface;
+using WarehouseManagementSystem.Application.Features.Auth.AssignRole;
 using WarehouseManagementSystem.Application.Features.Auth.Login;
 using WarehouseManagementSystem.Application.Features.Auth.Register;
 using WarehouseManagementSystem.Application.Features.Products.CreateProduct;
@@ -96,6 +97,9 @@ builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 #endregion
 
 #region Security
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService,
+    WarehouseManagementSystem.Api.Services.CurrentUserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasherService>();
 #endregion
@@ -110,6 +114,7 @@ builder.Services.AddScoped<DeleteProductHandler>();
 //User
 builder.Services.AddScoped<RegisterHandler>();
 builder.Services.AddScoped<LoginHandler>();
+builder.Services.AddScoped<AssignRoleHandler>();
 //Warehouse
 builder.Services.AddScoped<CreateWarehouseHandler>();
 builder.Services.AddScoped<GetWarehousesHandler>();

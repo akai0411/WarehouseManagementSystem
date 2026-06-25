@@ -48,6 +48,10 @@ public class ExceptionMiddleware
         {
             await HandleKnownException(context, ex, HttpStatusCode.Conflict);
         }
+        catch (NotFoundException ex)
+        {
+            await HandleKnownException(context, ex, HttpStatusCode.NotFound);
+        }
         catch (UnauthorizedException ex)
         {
             await HandleKnownException(context, ex, HttpStatusCode.Unauthorized);

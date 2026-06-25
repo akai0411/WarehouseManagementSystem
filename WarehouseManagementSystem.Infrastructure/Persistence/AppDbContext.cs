@@ -59,21 +59,30 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence
                 entity.HasKey(e => e.Id);
 
                 entity.Property(e => e.Email)
-                      .IsRequired()
-                      .HasMaxLength(255);
+                    .IsRequired()
+                    .HasMaxLength(255);
 
                 entity.HasIndex(e => e.Email)
-                      .IsUnique();
+                    .IsUnique();
 
                 entity.Property(e => e.PasswordHash)
-                      .IsRequired();
+                    .IsRequired();
 
                 entity.Property(e => e.Role)
-                      .IsRequired()
-                      .HasMaxLength(50);
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Country)
+                    .HasMaxLength(100);
 
                 entity.Property(e => e.CreatedAt)
-                      .IsRequired();
+                    .IsRequired();
+
+                entity.HasOne(e => e.Warehouse)
+                    .WithMany()
+                    .HasForeignKey(e => e.WarehouseId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false);
             });
             // Configure the Warehouse entity
             modelBuilder.Entity<Warehouse>(entity =>

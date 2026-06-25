@@ -41,11 +41,11 @@ namespace WarehouseManagementSystem.Api.Controllers
         }
 
         /// <summary>
-        /// Creates a new product in the system.
+        /// Creates a new product in the system. Only the "Admin" role can perform this action.
         /// </summary>
         /// <param name="command">Product creation data</param>
         /// <returns>The created product</returns>
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<ProductDto>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 400)]
@@ -94,12 +94,12 @@ namespace WarehouseManagementSystem.Api.Controllers
         }
 
         /// <summary>
-        /// Updates an existing product.
+        /// Updates an existing product. Only the "Admin" role can perform this action.
         /// </summary>
         /// <param name="id">Product identifier</param>
         /// <param name="command">Updated product data</param>
         /// <returns>Update result</returns>
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 404)]
@@ -116,11 +116,11 @@ namespace WarehouseManagementSystem.Api.Controllers
         }
 
         /// <summary>
-        /// Deletes a product from the system.
+        /// Deletes a product from the system. Only the "Admin" role can perform this action.
         /// </summary>
         /// <param name="id">Product identifier</param>
         /// <returns>Deletion result</returns>
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 404)]

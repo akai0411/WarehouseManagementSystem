@@ -6,5 +6,7 @@ namespace WarehouseManagementSystem.Application.Common.Interface
     {
         Task<User?> GetByEmailAsync(string email);
         Task AddAsync(User user);
+        Task<User?> GetByIdAsync(Guid id);
+        Task UpdateAsync(User user);
     }
 }

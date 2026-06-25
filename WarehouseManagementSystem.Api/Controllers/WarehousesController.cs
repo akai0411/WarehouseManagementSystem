@@ -42,9 +42,9 @@ namespace WarehouseManagementSystem.Api.Controllers
         }
 
         /// <summary>
-        /// Creates a new warehouse.
+        /// Creates a new warehouse. Only the "Admin" role can perform this action.
         /// </summary>
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<Guid>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 400)]
@@ -56,9 +56,9 @@ namespace WarehouseManagementSystem.Api.Controllers
         }
 
         /// <summary>
-        /// Retrieves a paginated list of warehouses.
+        /// Retrieves a paginated list of warehouses. Only users with the "Admin" or "RegionalManager" roles can access this endpoint.
         /// </summary>
-        [Authorize]
+        [Authorize(Roles = "Admin,RegionalManager")]
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<PagedResponse<WarehouseDto>>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 500)]
@@ -69,9 +69,9 @@ namespace WarehouseManagementSystem.Api.Controllers
         }
 
         /// <summary>
-        /// Retrieves a warehouse by its unique identifier.
+        /// Retrieves a warehouse by its unique identifier. Only users with the "Admin", "RegionalManager", or "WarehouseManager" roles can access this endpoint.
         /// </summary>
-        [Authorize]
+        [Authorize(Roles = "Admin,RegionalManager,WarehouseManager")]
         [HttpGet("{id:guid}")]
         [ProducesResponseType(typeof(ApiResponse<WarehouseDto>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 404)]
@@ -87,9 +87,9 @@ namespace WarehouseManagementSystem.Api.Controllers
         }
 
         /// <summary>
-        /// Updates an existing warehouse.
+        /// Updates an existing warehouse. Only the "Admin" role can perform this action.
         /// </summary>
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}")]
         [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 404)]
@@ -106,9 +106,9 @@ namespace WarehouseManagementSystem.Api.Controllers
         }
 
         /// <summary>
-        /// Soft deletes a warehouse.
+        /// Soft deletes a warehouse. Only the "Admin" role can perform this action.
         /// </summary>
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         [ProducesResponseType(typeof(ApiResponse<bool>), 200)]
         [ProducesResponseType(typeof(ApiResponse<object>), 404)]

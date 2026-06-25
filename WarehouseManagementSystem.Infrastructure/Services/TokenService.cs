@@ -23,12 +23,18 @@ public class TokenService : ITokenService
         var jwtKey = _config["Jwt:Key"]
             ?? throw new InvalidOperationException("JWT Key is missing.");
 
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role)
-        };
+        var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.Role, user.Role)
+    };
+
+        if (user.WarehouseId.HasValue)
+            claims.Add(new Claim("WarehouseId", user.WarehouseId.Value.ToString()));
+
+        if (!string.IsNullOrEmpty(user.Country))
+            claims.Add(new Claim("Country", user.Country));
 
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(jwtKey));
