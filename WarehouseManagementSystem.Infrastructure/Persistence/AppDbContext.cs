@@ -40,9 +40,6 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence
                 entity.Property(e => e.Price)
                     .HasColumnType("decimal(18,2)");
 
-                entity.Property(e => e.QuantityInStock)
-                    .IsRequired();
-
                 entity.Property(e => e.CreatedAt)
                     .IsRequired();
 

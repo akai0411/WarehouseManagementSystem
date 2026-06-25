@@ -14,8 +14,7 @@ public static class ProductMapper
             Name = product.Name,
             SKU = product.SKU,
             Description = product.Description,
-            Price = product.Price,
-            QuantityInStock = product.QuantityInStock
+            Price = product.Price
         };
     }
 
@@ -27,8 +26,7 @@ public static class ProductMapper
             Name = command.Name,
             SKU = command.SKU,
             Description = command.Description,
-            Price = command.Price,
-            QuantityInStock = command.QuantityInStock
+            Price = command.Price
         };
     }
 }

@@ -29,10 +29,5 @@
         /// Product price.
         /// </summary>
         public decimal Price { get; set; }
-
-        /// <summary>
-        /// Available quantity in stock.
-        /// </summary>
-        public int QuantityInStock { get; set; }
     }
 }

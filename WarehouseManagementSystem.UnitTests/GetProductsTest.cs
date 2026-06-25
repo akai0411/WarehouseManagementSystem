@@ -33,8 +33,7 @@ public class GetProductsTests
                 Name = "Laptop",
                 SKU = "LP-001",
                 Description = "Gaming Laptop",
-                Price = 1500,
-                QuantityInStock = 5
+                Price = 1500
             },
             new Product
             {
@@ -42,8 +41,7 @@ public class GetProductsTests
                 Name = "Mouse",
                 SKU = "MS-001",
                 Description = "Wireless Mouse",
-                Price = 50,
-                QuantityInStock = 25
+                Price = 50
             }
         };
 

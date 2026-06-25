@@ -25,8 +25,7 @@ public class GetProductByIdTests
             Name = "Laptop",
             SKU = "LP-001",
             Description = "Gaming Laptop",
-            Price = 1500,
-            QuantityInStock = 5
+            Price = 1500
         };
 
         _repositoryMock
@@ -43,7 +42,6 @@ public class GetProductByIdTests
         Assert.Equal(product.SKU, result.SKU);
         Assert.Equal(product.Description, result.Description);
         Assert.Equal(product.Price, result.Price);
-        Assert.Equal(product.QuantityInStock, result.QuantityInStock);
     }
 
     [Fact]

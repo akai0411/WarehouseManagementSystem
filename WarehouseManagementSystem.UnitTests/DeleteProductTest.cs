@@ -25,8 +25,7 @@ public class DeleteProductTests
             Name = "Keyboard",
             SKU = "KB-001",
             Description = "Mechanical keyboard",
-            Price = 100,
-            QuantityInStock = 10
+            Price = 100
         };
 
         _repositoryMock

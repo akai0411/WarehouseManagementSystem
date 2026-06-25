@@ -53,8 +53,7 @@ public class CreateProductTests
             Id = Guid.NewGuid(),
             Name = "Existing Product",
             SKU = "DUPLICATE",
-            Price = 10,
-            QuantityInStock = 5
+            Price = 10
         });
 
         var handler = new CreateProductHandler(_repo.Object, _validator.Object);

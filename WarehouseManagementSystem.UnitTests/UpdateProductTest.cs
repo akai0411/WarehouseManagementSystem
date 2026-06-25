@@ -32,8 +32,7 @@ public class UpdateProductTests
         {
             Name = "Updated Laptop",
             Description = "Updated Description",
-            Price = 1800,
-            QuantityInStock = 20
+            Price = 1800
         };
 
         var product = new Product
@@ -41,8 +40,7 @@ public class UpdateProductTests
             Id = id,
             Name = "Laptop",
             Description = "Old Description",
-            Price = 1500,
-            QuantityInStock = 10
+            Price = 1500
         };
 
         _validatorMock
@@ -68,7 +66,6 @@ public class UpdateProductTests
         Assert.Equal(command.Name, product.Name);
         Assert.Equal(command.Description, product.Description);
         Assert.Equal(command.Price, product.Price);
-        Assert.Equal(command.QuantityInStock, product.QuantityInStock);
 
         // UpdatedAt is intentionally not asserted here
         // it is handled by AppDbContext.SaveChangesAsync
@@ -87,8 +84,7 @@ public class UpdateProductTests
         {
             Name = "Updated Laptop",
             Description = "Updated Description",
-            Price = 1800,
-            QuantityInStock = 20
+            Price = 1800
         };
 
         _validatorMock
