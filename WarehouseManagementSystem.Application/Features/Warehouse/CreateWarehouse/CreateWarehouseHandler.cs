@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using WarehouseManagementSystem.Application.Common.Exceptions;
 using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Common.Mapping;
 
@@ -23,6 +24,18 @@ namespace WarehouseManagementSystem.Application.Features.Warehouses.CreateWareho
 
             if (!validationResult.IsValid)
                 throw new ValidationException(validationResult.Errors);
+
+            var existingName = await _repository.GetByNameAsync(command.Name);
+            if (existingName != null)
+                throw new ConflictException($"A warehouse with name '{command.Name}' already exists.");
+
+            var existingAddress = await _repository.GetByAddressAsync(
+                command.StreetName,
+                command.Number,
+                command.City,
+                command.Country);
+            if (existingAddress != null)
+                throw new ConflictException("A warehouse at this address already exists.");
 
             var warehouse = WarehouseMapper.ToEntity(command);
 

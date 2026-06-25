@@ -67,6 +67,22 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence.Repositories
                 .Include(w => w.Zones)
                 .FirstOrDefaultAsync(w => w.Id == id && !w.IsDeleted);
         }
+        public async Task<Warehouse?> GetByNameAsync(string name)
+        {
+            return await _context.Warehouses
+                .FirstOrDefaultAsync(w => w.Name == name && !w.IsDeleted);
+        }
+
+        public async Task<Warehouse?> GetByAddressAsync(string streetName, string number, string city, string country)
+        {
+            return await _context.Warehouses
+                .FirstOrDefaultAsync(w =>
+                    w.Address.StreetName == streetName &&
+                    w.Address.Number == number &&
+                    w.Address.City == city &&
+                    w.Address.Country == country &&
+                    !w.IsDeleted);
+        }
 
         public async Task UpdateAsync(Warehouse warehouse)
         {

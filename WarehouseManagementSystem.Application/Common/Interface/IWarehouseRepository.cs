@@ -10,5 +10,8 @@ namespace WarehouseManagementSystem.Application.Common.Interface
         Task<Warehouse?> GetByIdAsync(Guid id);
         Task UpdateAsync(Warehouse warehouse);
         Task DeleteAsync(Warehouse warehouse);
+        Task<Warehouse?> GetByNameAsync(string name);
+        Task<Warehouse?> GetByAddressAsync(string streetName, string number, string city, string country);
+
     }
 }
