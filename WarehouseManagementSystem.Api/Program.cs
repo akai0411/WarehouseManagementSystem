@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Reflection;
 using System.Text;
+using WarehouseManagementSystem.Api.Data;
 using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Features.Auth.AssignRole;
 using WarehouseManagementSystem.Application.Features.Auth.Login;
@@ -174,6 +175,14 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+#region Seeder
+if (app.Environment.IsDevelopment())
+{
+    await DataSeeder.SeedAsync(app.Services);
+}
+#endregion
+
+app.Run();
 app.Run();
 #endregion
 

@@ -52,6 +52,10 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence
                 entity.Property(e => e.DeletedAt)
                     .IsRequired(false);
 
+                entity.Property(e => e.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+
             });
             // Configure the User entity
             modelBuilder.Entity<User>(entity =>

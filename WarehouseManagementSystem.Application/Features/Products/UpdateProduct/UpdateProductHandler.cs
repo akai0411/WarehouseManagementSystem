@@ -1,9 +1,7 @@
-﻿
-
-using FluentValidation;
-using System.Xml.Linq;
+﻿using FluentValidation;
+using WarehouseManagementSystem.Application.Common.Exceptions;
 using WarehouseManagementSystem.Application.Common.Interface;
-using WarehouseManagementSystem.Application.Features.Products.CreateProduct;
+using Microsoft.EntityFrameworkCore;
 
 namespace WarehouseManagementSystem.Application.Features.Products.UpdateProduct
 {
@@ -38,7 +36,15 @@ namespace WarehouseManagementSystem.Application.Features.Products.UpdateProduct
             product.Description = request.Description;
             product.Price = request.Price;
 
-            await _repository.UpdateAsync(product);
+            try
+            {
+                await _repository.UpdateAsync(product);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new ConflictException(
+                    "This product was modified by another user. Please refresh and try again.");
+            }
 
             return true;
         }

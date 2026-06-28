@@ -29,5 +29,10 @@
         /// Product price.
         /// </summary>
         public decimal Price { get; set; }
+
+        /// <summary>
+        /// Product creation timestamp.
+        /// </summary>
+        public byte[] RowVersion { get; set; } = [];
     }
 }
