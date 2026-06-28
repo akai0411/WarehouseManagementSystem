@@ -222,7 +222,6 @@ namespace WarehouseManagementSystem.Api.Data
             if (await context.Users.AnyAsync()) return;
 
             var tempUser = new User();
-            var hashedPassword = passwordHasher.HashPassword(tempUser, "Admin123!");
 
             var users = new List<User>
             {
