@@ -60,6 +60,7 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence.Repositories
         {
             return await _context.Locations
                 .Include(l => l.Inventory)
+                .Include(l => l.Zone)
                 .FirstOrDefaultAsync(l => l.Id == id && !l.IsDeleted);
         }
 
