@@ -56,6 +56,10 @@ public class ExceptionMiddleware
         {
             await HandleKnownException(context, ex, HttpStatusCode.Unauthorized);
         }
+        catch (BusinessRuleException ex)
+        {
+            await HandleKnownException(context, ex, HttpStatusCode.UnprocessableEntity);
+        }
         catch (Exception ex)
         {
             await HandleUnknownException(context, ex);
