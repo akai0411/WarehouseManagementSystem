@@ -10,6 +10,11 @@ using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Features.Auth.AssignRole;
 using WarehouseManagementSystem.Application.Features.Auth.Login;
 using WarehouseManagementSystem.Application.Features.Auth.Register;
+using WarehouseManagementSystem.Application.Features.Locations.CreateLocation;
+using WarehouseManagementSystem.Application.Features.Locations.DeleteLocation;
+using WarehouseManagementSystem.Application.Features.Locations.GetLocationById;
+using WarehouseManagementSystem.Application.Features.Locations.GetLocations;
+using WarehouseManagementSystem.Application.Features.Locations.UpdateLocation;
 using WarehouseManagementSystem.Application.Features.Products.CreateProduct;
 using WarehouseManagementSystem.Application.Features.Products.DeleteProduct;
 using WarehouseManagementSystem.Application.Features.Products.GetProductById;
@@ -20,6 +25,11 @@ using WarehouseManagementSystem.Application.Features.Warehouses.DeleteWarehouse;
 using WarehouseManagementSystem.Application.Features.Warehouses.GetWarehouseById;
 using WarehouseManagementSystem.Application.Features.Warehouses.GetWarehouses;
 using WarehouseManagementSystem.Application.Features.Warehouses.UpdateWarehouse;
+using WarehouseManagementSystem.Application.Features.Zones.CreateZone;
+using WarehouseManagementSystem.Application.Features.Zones.DeleteZone;
+using WarehouseManagementSystem.Application.Features.Zones.GetZoneById;
+using WarehouseManagementSystem.Application.Features.Zones.GetZones;
+using WarehouseManagementSystem.Application.Features.Zones.UpdateZone;
 using WarehouseManagementSystem.Infrastructure.Persistence;
 using WarehouseManagementSystem.Infrastructure.Persistence.Repositories;
 using WarehouseManagementSystem.Infrastructure.Services;
@@ -95,6 +105,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
+builder.Services.AddScoped<IZoneRepository, ZoneRepository>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 #endregion
 
 #region Security
@@ -122,6 +134,19 @@ builder.Services.AddScoped<GetWarehousesHandler>();
 builder.Services.AddScoped<GetWarehouseByIdHandler>();
 builder.Services.AddScoped<UpdateWarehouseHandler>();
 builder.Services.AddScoped<DeleteWarehouseHandler>();
+// Zones
+builder.Services.AddScoped<CreateZoneHandler>();
+builder.Services.AddScoped<GetZonesHandler>();
+builder.Services.AddScoped<GetZoneByIdHandler>();
+builder.Services.AddScoped<UpdateZoneHandler>();
+builder.Services.AddScoped<DeleteZoneHandler>();
+
+// Locations
+builder.Services.AddScoped<CreateLocationHandler>();
+builder.Services.AddScoped<GetLocationsHandler>();
+builder.Services.AddScoped<GetLocationByIdHandler>();
+builder.Services.AddScoped<UpdateLocationHandler>();
+builder.Services.AddScoped<DeleteLocationHandler>();
 #endregion
 
 #region FluentValidation
