@@ -10,6 +10,10 @@ using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Features.Auth.AssignRole;
 using WarehouseManagementSystem.Application.Features.Auth.Login;
 using WarehouseManagementSystem.Application.Features.Auth.Register;
+using WarehouseManagementSystem.Application.Features.Inventory.CreateInventory;
+using WarehouseManagementSystem.Application.Features.Inventory.DeleteInventory;
+using WarehouseManagementSystem.Application.Features.Inventory.GetInventory;
+using WarehouseManagementSystem.Application.Features.Inventory.GetInventoryById;
 using WarehouseManagementSystem.Application.Features.Locations.CreateLocation;
 using WarehouseManagementSystem.Application.Features.Locations.DeleteLocation;
 using WarehouseManagementSystem.Application.Features.Locations.GetLocationById;
@@ -107,6 +111,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 builder.Services.AddScoped<IZoneRepository, ZoneRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 #endregion
 
 #region Security
@@ -140,13 +145,17 @@ builder.Services.AddScoped<GetZonesHandler>();
 builder.Services.AddScoped<GetZoneByIdHandler>();
 builder.Services.AddScoped<UpdateZoneHandler>();
 builder.Services.AddScoped<DeleteZoneHandler>();
-
 // Locations
 builder.Services.AddScoped<CreateLocationHandler>();
 builder.Services.AddScoped<GetLocationsHandler>();
 builder.Services.AddScoped<GetLocationByIdHandler>();
 builder.Services.AddScoped<UpdateLocationHandler>();
 builder.Services.AddScoped<DeleteLocationHandler>();
+// Inventory
+builder.Services.AddScoped<CreateInventoryHandler>();
+builder.Services.AddScoped<GetInventoryHandler>();
+builder.Services.AddScoped<GetInventoryByIdHandler>();
+builder.Services.AddScoped<DeleteInventoryHandler>();
 #endregion
 
 #region FluentValidation
