@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WarehouseManagementSystem.Application.Common.Filters;
 using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Features.Warehouses.GetWarehouses;
 using WarehouseManagementSystem.Domain.Entities;
@@ -20,42 +21,39 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<(List<Warehouse> Items, int TotalCount)> GetAllAsync(GetWarehousesQuery query)
+        public async Task<(List<Warehouse> Items, int TotalCount)> GetAllAsync(WarehouseFilter filter)
         {
             var warehouses = _context.Warehouses
                 .Where(w => !w.IsDeleted);
 
-            if (!string.IsNullOrWhiteSpace(query.Name))
-                warehouses = warehouses.Where(w => w.Name.Contains(query.Name));
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+                warehouses = warehouses.Where(w => w.Name.Contains(filter.Name));
 
-            if (!string.IsNullOrWhiteSpace(query.City))
-                warehouses = warehouses.Where(w => w.Address.City.Contains(query.City));
+            if (!string.IsNullOrWhiteSpace(filter.City))
+                warehouses = warehouses.Where(w => w.Address.City.Contains(filter.City));
 
-            if (!string.IsNullOrWhiteSpace(query.Country))
-                warehouses = warehouses.Where(w => w.Address.Country.Contains(query.Country));
+            if (!string.IsNullOrWhiteSpace(filter.Country))
+                warehouses = warehouses.Where(w => w.Address.Country.Contains(filter.Country));
 
             var totalCount = await warehouses.CountAsync();
 
-            warehouses = query.SortBy?.ToLower() switch
+            warehouses = filter.SortBy?.ToLower() switch
             {
-                "name" => query.Descending
+                "name" => filter.Descending
                     ? warehouses.OrderByDescending(w => w.Name)
                     : warehouses.OrderBy(w => w.Name),
-
-                "city" => query.Descending
+                "city" => filter.Descending
                     ? warehouses.OrderByDescending(w => w.Address.City)
                     : warehouses.OrderBy(w => w.Address.City),
-
-                "country" => query.Descending
+                "country" => filter.Descending
                     ? warehouses.OrderByDescending(w => w.Address.Country)
                     : warehouses.OrderBy(w => w.Address.Country),
-
                 _ => warehouses.OrderBy(w => w.Name)
             };
 
             var items = await warehouses
-                .Skip((query.PageNumber - 1) * query.PageSize)
-                .Take(query.PageSize)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
                 .ToListAsync();
 
             return (items, totalCount);

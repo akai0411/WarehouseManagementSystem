@@ -1,4 +1,5 @@
-﻿using WarehouseManagementSystem.Application.Common.Interface;
+﻿using WarehouseManagementSystem.Application.Common.Filters;
+using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Common.Mapping;
 using WarehouseManagementSystem.Application.Common.Responses;
 using WarehouseManagementSystem.Application.Features.Warehouses.Common;
@@ -20,11 +21,18 @@ namespace WarehouseManagementSystem.Application.Features.Warehouses.GetWarehouse
 
         public async Task<PagedResponse<WarehouseDto>> Handle(GetWarehousesQuery query)
         {
-            // RegionalManager only sees warehouses in their country
-            if (_currentUser.IsRegionalManager)
-                query.Country = _currentUser.Country;
+            var filter = new WarehouseFilter
+            {
+                Name = query.Name,
+                City = query.City,
+                Country = _currentUser.IsRegionalManager ? _currentUser.Country : query.Country,
+                SortBy = query.SortBy,
+                Descending = query.Descending,
+                PageNumber = query.PageNumber,
+                PageSize = query.PageSize
+            };
 
-            var (warehouses, totalCount) = await _repository.GetAllAsync(query);
+            var (warehouses, totalCount) = await _repository.GetAllAsync(filter);
 
             var items = warehouses
                 .Select(WarehouseMapper.ToDto)
