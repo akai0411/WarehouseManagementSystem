@@ -24,6 +24,9 @@ using WarehouseManagementSystem.Application.Features.Products.DeleteProduct;
 using WarehouseManagementSystem.Application.Features.Products.GetProductById;
 using WarehouseManagementSystem.Application.Features.Products.GetProducts;
 using WarehouseManagementSystem.Application.Features.Products.UpdateProduct;
+using WarehouseManagementSystem.Application.Features.StockMovements.CreateStockMovement;
+using WarehouseManagementSystem.Application.Features.StockMovements.GetStockMovementById;
+using WarehouseManagementSystem.Application.Features.StockMovements.GetStockMovements;
 using WarehouseManagementSystem.Application.Features.Warehouses.CreateWarehouse;
 using WarehouseManagementSystem.Application.Features.Warehouses.DeleteWarehouse;
 using WarehouseManagementSystem.Application.Features.Warehouses.GetWarehouseById;
@@ -112,6 +115,7 @@ builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
 builder.Services.AddScoped<IZoneRepository, ZoneRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
 #endregion
 
 #region Security
@@ -156,6 +160,10 @@ builder.Services.AddScoped<CreateInventoryHandler>();
 builder.Services.AddScoped<GetInventoryHandler>();
 builder.Services.AddScoped<GetInventoryByIdHandler>();
 builder.Services.AddScoped<DeleteInventoryHandler>();
+// Stock Movement
+builder.Services.AddScoped<CreateStockMovementHandler>();
+builder.Services.AddScoped<GetStockMovementsHandler>();
+builder.Services.AddScoped<GetStockMovementByIdHandler>();
 #endregion
 
 #region FluentValidation
