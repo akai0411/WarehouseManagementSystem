@@ -12,5 +12,12 @@ namespace WarehouseManagementSystem.Application.Common.Interface
         Task DeleteAsync(Warehouse warehouse);
         Task<Warehouse?> GetByNameAsync(string name);
         Task<Warehouse?> GetByAddressAsync(string streetName, string number, string city, string country);
+
+        /// <summary>
+        /// Checks whether the warehouse still has non-deleted zones. Mirrors
+        /// IZoneRepository.HasActiveLocationsAsync — used to block deleting a
+        /// warehouse that still has active zones underneath it.
+        /// </summary>
+        Task<bool> HasActiveZonesAsync(Guid warehouseId);
     }
 }
