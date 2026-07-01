@@ -1,6 +1,7 @@
 ﻿using WarehouseManagementSystem.Application.Features.Products.Common;
 using WarehouseManagementSystem.Application.Features.Products.CreateProduct;
 using WarehouseManagementSystem.Domain.Entities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WarehouseManagementSystem.Application.Common.Mapping;
 
@@ -15,7 +16,7 @@ public static class ProductMapper
             SKU = product.SKU,
             Description = product.Description,
             Price = product.Price,
-            QuantityInStock = product.QuantityInStock
+            RowVersion = product.RowVersion
         };
     }
 
@@ -23,13 +24,10 @@ public static class ProductMapper
     {
         return new Product
         {
-            Id = Guid.NewGuid(),
             Name = command.Name,
             SKU = command.SKU,
             Description = command.Description,
-            Price = command.Price,
-            QuantityInStock = command.QuantityInStock,
-            CreatedAt = DateTime.UtcNow
+            Price = command.Price
         };
     }
 }

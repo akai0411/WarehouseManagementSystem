@@ -3,7 +3,8 @@ using WarehouseManagementSystem.Application.Common.Exceptions;
 using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Common.Mapping;
 using WarehouseManagementSystem.Application.Features.Products.CreateProduct;
-using WarehouseManagementSystem.Domain.Entities;
+
+namespace WarehouseManagementSystem.Application.Features.Products.CreateProduct;
 
 public class CreateProductHandler
 {

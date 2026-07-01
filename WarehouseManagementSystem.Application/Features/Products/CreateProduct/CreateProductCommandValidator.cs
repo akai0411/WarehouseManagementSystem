@@ -8,7 +8,6 @@ namespace WarehouseManagementSystem.Application.Features.Products.CreateProduct
             RuleFor(p => p.Name).ValidName();
             RuleFor(p => p.SKU).ValidSku();
             RuleFor(p => p.Price).ValidPrice();
-            RuleFor(p => p.QuantityInStock).ValidQuantity();
             RuleFor(p => p.Description).ValidDescription();  
         }
     }

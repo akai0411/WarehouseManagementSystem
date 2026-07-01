@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using WarehouseManagementSystem.Application.Common.Validation;
 
 public static class ProductValidationExtensions
 {

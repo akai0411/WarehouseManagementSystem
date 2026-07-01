@@ -30,4 +30,14 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Inventory\" />
+    <Folder Include="Locations\" />
+    <Folder Include="StockMovements\" />
+    <Folder Include="Zones\" />
+    <Folder Include="Warehouses\" />
+    <Folder Include="TestHelpers\" />
+    <Folder Include="Products\" />
+  </ItemGroup>
+
 </Project>

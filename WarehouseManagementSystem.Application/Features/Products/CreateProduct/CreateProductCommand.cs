@@ -7,6 +7,5 @@ namespace WarehouseManagementSystem.Application.Features.Products.CreateProduct
         public string SKU { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
-        public int QuantityInStock { get; set; }
     }
 }

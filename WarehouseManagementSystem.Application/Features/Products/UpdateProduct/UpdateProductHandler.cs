@@ -1,9 +1,7 @@
-﻿
-
-using FluentValidation;
-using System.Xml.Linq;
+﻿using FluentValidation;
+using WarehouseManagementSystem.Application.Common.Exceptions;
 using WarehouseManagementSystem.Application.Common.Interface;
-using WarehouseManagementSystem.Application.Features.Products.CreateProduct;
+using Microsoft.EntityFrameworkCore;
 
 namespace WarehouseManagementSystem.Application.Features.Products.UpdateProduct
 {
@@ -37,10 +35,19 @@ namespace WarehouseManagementSystem.Application.Features.Products.UpdateProduct
             product.Name = request.Name;
             product.Description = request.Description;
             product.Price = request.Price;
-            product.QuantityInStock = request.QuantityInStock;
-            product.UpdatedAt = DateTime.UtcNow;
 
-            await _repository.UpdateAsync(product);
+            try
+            {
+                // request.RowVersion is the token the caller originally read the
+                // product with (e.g. from a prior GET) — passing it through lets
+                // the repository detect if someone else changed the row since then.
+                await _repository.UpdateAsync(product, request.RowVersion);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new ConflictException(
+                    "This product was modified by another user. Please refresh and try again.");
+            }
 
             return true;
         }

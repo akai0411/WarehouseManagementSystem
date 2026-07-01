@@ -31,8 +31,8 @@
         public decimal Price { get; set; }
 
         /// <summary>
-        /// Available quantity in stock.
+        /// Product creation timestamp.
         /// </summary>
-        public int QuantityInStock { get; set; }
+        public byte[] RowVersion { get; set; } = [];
     }
 }

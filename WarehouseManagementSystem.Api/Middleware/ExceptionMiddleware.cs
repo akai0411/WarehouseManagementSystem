@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using FluentValidation;
+using System.Net;
 using System.Text.Json;
+using WarehouseManagementSystem.Application.Common.Exceptions;
 /// <summary>
 /// Middleware that handles unhandled exceptions and returns a standardized error response.
 /// </summary>
@@ -29,23 +31,77 @@ public class ExceptionMiddleware
         {
             await _next(context);
         }
+        catch (ValidationException ex)
+        {
+            await HandleKnownException(
+                context,
+                ex,
+                HttpStatusCode.BadRequest,
+                ex.Errors.Select(e => new
+                {
+                    field = e.PropertyName,
+                    message = e.ErrorMessage
+                })
+            );
+        }
+        catch (ConflictException ex)
+        {
+            await HandleKnownException(context, ex, HttpStatusCode.Conflict);
+        }
+        catch (NotFoundException ex)
+        {
+            await HandleKnownException(context, ex, HttpStatusCode.NotFound);
+        }
+        catch (UnauthorizedException ex)
+        {
+            await HandleKnownException(context, ex, HttpStatusCode.Unauthorized);
+        }
+        catch (BusinessRuleException ex)
+        {
+            await HandleKnownException(context, ex, HttpStatusCode.UnprocessableEntity);
+        }
         catch (Exception ex)
         {
-            await HandleExceptionAsync(context, ex);
+            await HandleUnknownException(context, ex);
         }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+    private async Task HandleKnownException(HttpContext context, Exception ex, HttpStatusCode statusCode, object? errors = null)
     {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)statusCode;
+
+        var traceId = context.TraceIdentifier;
+
+        _logger.LogWarning(ex,
+            "Handled exception. TraceId: {TraceId}, Path: {Path}",
+            traceId,
+            context.Request.Path);
+
+        var response = new
+        {
+            success = false,
+            message = ex is ValidationException
+            ? "Validation failed."
+            : ex.Message,
+            errors,
+            traceId
+        };
+
+        await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+    }
+
+    private async Task HandleUnknownException(HttpContext context, Exception ex)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
         var traceId = context.TraceIdentifier;
 
         _logger.LogError(ex,
             "Unhandled exception occurred. TraceId: {TraceId}, Path: {Path}",
             traceId,
             context.Request.Path);
-
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
         var response = new
         {
@@ -54,8 +110,6 @@ public class ExceptionMiddleware
             traceId
         };
 
-        var json = JsonSerializer.Serialize(response);
-
-        await context.Response.WriteAsync(json);
+        await context.Response.WriteAsync(JsonSerializer.Serialize(response));
     }
 }

@@ -1,14 +1,17 @@
-﻿public class GetProductsQuery
+﻿namespace WarehouseManagementSystem.Application.Features.Products.GetProducts
 {
-    public int PageNumber { get; set; } = 1;
+    public class GetProductsQuery
+    {
+        public int PageNumber { get; set; } = 1;
 
-    public int PageSize { get; set; } = 20;
+        public int PageSize { get; set; } = 20;
 
-    public string? Name { get; set; }
+        public string? Name { get; set; }
 
-    public string? SKU { get; set; }
+        public string? SKU { get; set; }
 
-    public string? SortBy { get; set; }
+        public string? SortBy { get; set; }
 
-    public bool Descending { get; set; }
+        public bool Descending { get; set; }
+    }
 }
