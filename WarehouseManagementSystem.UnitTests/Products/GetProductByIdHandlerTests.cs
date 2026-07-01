@@ -4,19 +4,21 @@ using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Features.Products.GetProductById;
 using WarehouseManagementSystem.Domain.Entities;
 
-public class GetProductByIdTests
+namespace WarehouseManagementSystem.UnitTests.Products;
+
+public class GetProductByIdHandlerTests
 {
     private readonly Mock<IProductRepository> _repositoryMock;
     private readonly GetProductByIdHandler _handler;
 
-    public GetProductByIdTests()
+    public GetProductByIdHandlerTests()
     {
         _repositoryMock = new Mock<IProductRepository>();
         _handler = new GetProductByIdHandler(_repositoryMock.Object);
     }
 
     [Fact]
-    public async Task Should_Return_ProductDto_When_Product_Exists()
+    public async Task Handle_ProductExists_ReturnsDto()
     {
         // Arrange
         var product = new Product
@@ -45,7 +47,7 @@ public class GetProductByIdTests
     }
 
     [Fact]
-    public async Task Should_Return_Null_When_Product_Does_Not_Exist()
+    public async Task Handle_ProductNotFound_ReturnsNull()
     {
         // Arrange
         var id = Guid.NewGuid();

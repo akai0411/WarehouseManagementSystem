@@ -4,19 +4,21 @@ using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Features.Products.DeleteProduct;
 using WarehouseManagementSystem.Domain.Entities;
 
-public class DeleteProductTests
+namespace WarehouseManagementSystem.UnitTests.Products;
+
+public class DeleteProductHandlerTests
 {
     private readonly Mock<IProductRepository> _repositoryMock;
     private readonly DeleteProductHandler _handler;
 
-    public DeleteProductTests()
+    public DeleteProductHandlerTests()
     {
         _repositoryMock = new Mock<IProductRepository>();
         _handler = new DeleteProductHandler(_repositoryMock.Object);
     }
 
     [Fact]
-    public async Task Should_Return_True_When_Product_Exists()
+    public async Task Handle_ProductExists_DeletesAndReturnsTrue()
     {
         // Arrange
         var product = new Product
@@ -46,7 +48,7 @@ public class DeleteProductTests
     }
 
     [Fact]
-    public async Task Should_Return_False_When_Product_Does_Not_Exist()
+    public async Task Handle_ProductNotFound_ReturnsFalse()
     {
         // Arrange
         var id = Guid.NewGuid();
