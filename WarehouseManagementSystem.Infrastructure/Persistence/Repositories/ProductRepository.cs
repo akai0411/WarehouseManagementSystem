@@ -60,10 +60,19 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence.Repositories
             return await
                 _context.Products.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
         }
-        public async Task UpdateAsync(Product product)
+        public async Task UpdateAsync(Product product, byte[] originalRowVersion)
         {
             _context.Products.Update(product);
-            await _context.SaveChangesAsync(); ;
+
+            // Tells EF Core "this is the RowVersion the caller last saw" so the
+            // generated UPDATE's WHERE clause checks against that value, instead
+            // of the value from this method's own GetByIdAsync a moment earlier.
+            // Without this, the concurrency check could only ever catch a write
+            // that happened in the few milliseconds inside this method — not the
+            // real-world case of "another user changed it after I loaded the form".
+            _context.Entry(product).Property(p => p.RowVersion).OriginalValue = originalRowVersion;
+
+            await _context.SaveChangesAsync();
         }
         public async Task DeleteAsync(Product product)
         {

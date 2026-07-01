@@ -38,7 +38,10 @@ namespace WarehouseManagementSystem.Application.Features.Products.UpdateProduct
 
             try
             {
-                await _repository.UpdateAsync(product);
+                // request.RowVersion is the token the caller originally read the
+                // product with (e.g. from a prior GET) — passing it through lets
+                // the repository detect if someone else changed the row since then.
+                await _repository.UpdateAsync(product, request.RowVersion);
             }
             catch (DbUpdateConcurrencyException)
             {
