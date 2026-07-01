@@ -13,18 +13,23 @@ This API allows users to manage warehouse products while maintaining a clean and
 ## Features
 
 * Product management (CRUD)
-* Soft delete
+* Warehouse / Zone / Location management (CRUD, hierarchical: Warehouse → Zone → Location)
+* Inventory management (assign a product to a location, unassign, query)
+* Stock movement ledger (Inbound / Outbound / Adjustment) with automatic quantity updates
+* JWT authentication with role-based authorization (Admin, RegionalManager, WarehouseManager, Operator)
+* Role-based data scoping (e.g. a WarehouseManager only sees/manages their own warehouse; a RegionalManager is scoped by country)
+* Optimistic concurrency control (RowVersion) on Product and Inventory updates
+* Soft delete, with referential guards (e.g. a warehouse can't be deleted while it still has active zones)
 * SKU uniqueness validation
-* Pagination
-* Filtering by product name and SKU
-* Sorting (Name, SKU, Price)
+* Pagination, filtering and sorting on list endpoints
 * Global exception handling
 * Structured logging with Serilog
-* Swagger / OpenAPI documentation
+* Swagger / OpenAPI documentation with JWT authorization support
 * XML API documentation
 * FluentValidation
 * Standard API response wrapper
 * Unit testing with xUnit v3 and Moq
+* Docker support (API + SQL Server via docker-compose), with migrations and seed data applied automatically on startup
 
 ---
 
@@ -41,6 +46,7 @@ This API allows users to manage warehouse products while maintaining a clean and
 * Swagger / Swashbuckle
 * xUnit v3
 * Moq
+* Docker / Docker Compose
 
 ---
 
@@ -92,19 +98,82 @@ The project follows Clean Architecture principles where:
 
 ## API Endpoints
 
+### Auth
+
+| Method | Endpoint                | Description                                | Roles                  |
+| ------ | ------------------------ | ------------------------------------------- | ----------------------- |
+| POST   | `/api/auth/register`     | Register a new user                         | Public                  |
+| POST   | `/api/auth/login`        | Authenticate and receive a JWT              | Public                  |
+| PUT    | `/api/auth/assign-role`  | Assign a role/scope to a user               | Admin, WarehouseManager |
+
 ### Products
 
-| Method | Endpoint             | Description         |
-| ------ | -------------------- | ------------------- |
-| GET    | `/api/products`      | Get all products    |
-| GET    | `/api/products/{id}` | Get product by id   |
-| POST   | `/api/products`      | Create product      |
-| PUT    | `/api/products/{id}` | Update product      |
-| DELETE | `/api/products/{id}` | Soft delete product |
+| Method | Endpoint             | Description          | Roles |
+| ------ | -------------------- | --------------------- | ----- |
+| GET    | `/api/products`      | Get all products      | Authenticated |
+| GET    | `/api/products/{id}` | Get product by id      | Authenticated |
+| POST   | `/api/products`      | Create product         | Admin |
+| PUT    | `/api/products/{id}` | Update product         | Admin |
+| DELETE | `/api/products/{id}` | Soft delete product    | Admin |
+
+### Warehouses
+
+| Method | Endpoint                | Description                | Roles                              |
+| ------ | ------------------------ | ---------------------------- | ------------------------------------ |
+| GET    | `/api/warehouses`       | Get all warehouses          | Admin, RegionalManager               |
+| GET    | `/api/warehouses/{id}`  | Get warehouse by id         | Admin, RegionalManager, WarehouseManager |
+| POST   | `/api/warehouses`       | Create warehouse            | Admin |
+| PUT    | `/api/warehouses/{id}`  | Update warehouse            | Admin |
+| DELETE | `/api/warehouses/{id}`  | Soft delete warehouse (blocked if it still has active zones) | Admin |
+
+### Zones
+
+Nested under a warehouse.
+
+| Method | Endpoint                                         | Description             | Roles                                          |
+| ------ | -------------------------------------------------- | -------------------------- | ------------------------------------------------- |
+| GET    | `/api/warehouses/{warehouseId}/zones`             | Get all zones in a warehouse | Admin, RegionalManager, WarehouseManager, Operator |
+| GET    | `/api/warehouses/{warehouseId}/zones/{zoneId}`    | Get zone by id             | Admin, RegionalManager, WarehouseManager, Operator |
+| POST   | `/api/warehouses/{warehouseId}/zones`             | Create zone                | Admin |
+| PUT    | `/api/warehouses/{warehouseId}/zones/{zoneId}`    | Update zone                | Admin |
+| DELETE | `/api/warehouses/{warehouseId}/zones/{zoneId}`    | Soft delete zone (blocked if it still has active locations) | Admin |
+
+### Locations
+
+Nested under a zone.
+
+| Method | Endpoint                                       | Description                 | Roles                                          |
+| ------ | ------------------------------------------------ | ------------------------------ | ------------------------------------------------- |
+| GET    | `/api/zones/{zoneId}/locations`                 | Get all locations in a zone   | Admin, RegionalManager, WarehouseManager, Operator |
+| GET    | `/api/zones/{zoneId}/locations/{locationId}`    | Get location by id            | Admin, RegionalManager, WarehouseManager, Operator |
+| POST   | `/api/zones/{zoneId}/locations`                 | Create location               | Admin |
+| PUT    | `/api/zones/{zoneId}/locations/{locationId}`    | Update location                | Admin |
+| DELETE | `/api/zones/{zoneId}/locations/{locationId}`    | Soft delete location (blocked if it still has inventory assigned) | Admin |
+
+### Inventory
+
+| Method | Endpoint             | Description                                      | Roles                    |
+| ------ | --------------------- | --------------------------------------------------- | -------------------------- |
+| GET    | `/api/inventory`      | Get inventory (results scoped by role)             | Authenticated              |
+| GET    | `/api/inventory/{id}` | Get inventory record by id                          | Authenticated              |
+| POST   | `/api/inventory`      | Assign a product to a location                      | Admin, WarehouseManager    |
+| DELETE | `/api/inventory/{id}` | Unassign a product from a location (only if quantity is 0) | Admin |
+
+### Stock Movements
+
+An append-only ledger — movements can be created and read, never updated or deleted. Creating one automatically adjusts the related inventory's quantity.
+
+| Method | Endpoint                    | Description                            | Roles                              |
+| ------ | ----------------------------- | ----------------------------------------- | ------------------------------------- |
+| GET    | `/api/stockmovements`        | Get stock movements (results scoped by role) | Authenticated |
+| GET    | `/api/stockmovements/{id}`   | Get stock movement by id                | Authenticated |
+| POST   | `/api/stockmovements`        | Register a movement (Inbound / Outbound / Adjustment) | Admin, WarehouseManager, Operator (Adjustment: Admin, WarehouseManager only) |
 
 ---
 
 ## Query Parameters
+
+All list endpoints (Products, Warehouses, Zones, Locations, Inventory, Stock Movements) support pagination, and most support filtering/sorting relevant to that resource.
 
 Example:
 
@@ -112,14 +181,14 @@ Example:
 GET /api/products?pageNumber=1&pageSize=10&name=laptop&sortBy=price&descending=true
 ```
 
-Supported parameters:
+Common parameters:
 
 * pageNumber
 * pageSize
-* name
-* sku
 * sortBy
 * descending
+
+Resource-specific filters include `name` / `sku` (Products), `city` / `country` (Warehouses), `type` (Zones), and role-based scoping filters on Inventory / Stock Movements (applied automatically based on the caller's role, not passed by the client).
 
 ---
 
@@ -167,38 +236,36 @@ Examples:
 
 ## Running the Project
 
-### Clone the repository
+### Option A: Docker (recommended)
+
+No local SQL Server or .NET SDK needed — this spins up the API and a SQL Server container together, and applies EF Core migrations automatically on startup.
 
 ```bash
 git clone https://github.com/akai0411/WarehouseManagementSystem.git
-```
-
-### Navigate to the solution
-
-```bash
 cd WarehouseManagementSystem
-```
-
-### Update the connection string
-
-Modify the `DefaultConnection` value in `appsettings.json`.
-
-### Apply migrations
-
-```bash
-dotnet ef database update
-```
-
-### Run the API
-
-```bash
-dotnet run --project WarehouseManagementSystem.Api
+docker compose up --build
 ```
 
 Swagger will be available at:
 
 ```
-https://localhost:xxxx/swagger
+http://localhost:8080/swagger
+```
+
+The database is seeded automatically on first run (sample warehouses, zones, locations, products and users — see `WarehouseManagementSystem.Api/Data/DataSeeder.cs`).
+
+### Option B: Local .NET SDK
+
+```bash
+git clone https://github.com/akai0411/WarehouseManagementSystem.git
+cd WarehouseManagementSystem
+```
+
+Update the `DefaultConnection` value in `appsettings.json` to point at your local SQL Server instance, then:
+
+```bash
+dotnet ef database update --project WarehouseManagementSystem.Infrastructure --startup-project WarehouseManagementSystem.Api
+dotnet run --project WarehouseManagementSystem.Api
 ```
 
 ---
@@ -213,14 +280,11 @@ dotnet test
 
 ## Future Improvements
 
-* JWT Authentication
-* Role-based Authorization
-* Docker support
 * GitHub Actions CI/CD
-* Integration Tests
-* Health Checks
-* API Versioning
-* Response Caching
+* Integration tests
+* Health checks
+* API versioning
+* Response caching
 
 ---
 
@@ -238,6 +302,14 @@ This project was built to strengthen knowledge in:
 * Logging
 * Testing
 * Software maintainability
+
+---
+
+## Author
+
+Jorge Margolles
+
+[LinkedIn](https://www.linkedin.com/in/jorge-developer-programmer/)
 
 ---
 
