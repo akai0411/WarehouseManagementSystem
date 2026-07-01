@@ -1,0 +1,44 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: warehouse-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      # Waits until SQL Server actually accepts connections before the API
+      # container starts, otherwise the API would fail on its first
+      # migration attempt while the DB is still booting.
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  api:
+    build:
+      context: .
+      dockerfile: WarehouseManagementSystem.Api/Dockerfile
+    container_name: warehouse-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      # Overrides appsettings.json's DefaultConnection (double underscore is
+      # ASP.NET Core's convention for nested config keys via env vars).
+      # Points at the "sqlserver" service by its Compose network name.
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=WarehouseDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True"
+      Jwt__Key: "Pq9zR8HoYJvCFTIQcmjjzsQuvWxj1UKyr9tahAHPR/UGTijKpT5CdYO8w9V3F0zJA48LzRi9T/BdbKtViWe5cw=="
+      Jwt__Issuer: "WarehouseAPI"
+      Jwt__Audience: "WarehouseAPIUsers"
+      Jwt__DurationInMinutes: "60"
+    ports:
+      - "8080:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+volumes:
+  sqlserver_data:
