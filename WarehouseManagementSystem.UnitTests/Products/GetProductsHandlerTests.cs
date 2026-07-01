@@ -4,19 +4,21 @@ using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Features.Products.GetProducts;
 using WarehouseManagementSystem.Domain.Entities;
 
-public class GetProductsTests
+namespace WarehouseManagementSystem.UnitTests.Products;
+
+public class GetProductsHandlerTests
 {
     private readonly Mock<IProductRepository> _repositoryMock;
     private readonly GetProductsHandler _handler;
 
-    public GetProductsTests()
+    public GetProductsHandlerTests()
     {
         _repositoryMock = new Mock<IProductRepository>();
         _handler = new GetProductsHandler(_repositoryMock.Object);
     }
 
     [Fact]
-    public async Task Should_Return_Paged_Response_With_Products()
+    public async Task Handle_ProductsExist_ReturnsPagedResponse()
     {
         // Arrange
         var query = new GetProductsQuery
@@ -68,7 +70,7 @@ public class GetProductsTests
     }
 
     [Fact]
-    public async Task Should_Return_Empty_Page_When_No_Products_Exist()
+    public async Task Handle_NoProducts_ReturnsEmptyPage()
     {
         // Arrange
         var query = new GetProductsQuery

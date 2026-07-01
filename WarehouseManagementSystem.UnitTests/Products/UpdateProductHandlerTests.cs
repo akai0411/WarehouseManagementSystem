@@ -6,13 +6,15 @@ using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Features.Products.UpdateProduct;
 using WarehouseManagementSystem.Domain.Entities;
 
-public class UpdateProductTests
+namespace WarehouseManagementSystem.UnitTests.Products;
+
+public class UpdateProductHandlerTests
 {
     private readonly Mock<IProductRepository> _repositoryMock;
     private readonly Mock<IValidator<UpdateProductCommand>> _validatorMock;
     private readonly UpdateProductHandler _handler;
 
-    public UpdateProductTests()
+    public UpdateProductHandlerTests()
     {
         _repositoryMock = new Mock<IProductRepository>();
         _validatorMock = new Mock<IValidator<UpdateProductCommand>>();
@@ -23,7 +25,7 @@ public class UpdateProductTests
     }
 
     [Fact]
-    public async Task Should_Return_True_When_Product_Exists()
+    public async Task Handle_ValidCommand_UpdatesProductAndReturnsTrue()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -75,7 +77,7 @@ public class UpdateProductTests
     }
 
     [Fact]
-    public async Task Should_Return_False_When_Product_Does_Not_Exist()
+    public async Task Handle_ProductNotFound_ReturnsFalse()
     {
         // Arrange
         var id = Guid.NewGuid();
@@ -109,7 +111,7 @@ public class UpdateProductTests
     }
 
     [Fact]
-    public async Task Should_Throw_ValidationException_When_Command_Is_Invalid()
+    public async Task Handle_InvalidCommand_ThrowsValidationException()
     {
         // Arrange
         var id = Guid.NewGuid();
