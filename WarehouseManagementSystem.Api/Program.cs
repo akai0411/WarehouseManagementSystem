@@ -225,7 +225,6 @@ if (app.Environment.IsDevelopment())
 #endregion
 
 app.Run();
-app.Run();
 #endregion
 
 
