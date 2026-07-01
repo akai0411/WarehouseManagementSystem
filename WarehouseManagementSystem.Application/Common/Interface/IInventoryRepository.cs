@@ -10,5 +10,6 @@ namespace WarehouseManagementSystem.Application.Common.Interface
         Task<Inventory?> GetByIdAsync(Guid id);
         Task<Inventory?> GetByLocationIdAsync(Guid locationId);
         Task DeleteAsync(Inventory inventory);
+        Task UpdateAsync(Inventory inventory);
     }
 }

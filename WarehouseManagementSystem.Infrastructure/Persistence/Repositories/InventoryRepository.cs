@@ -96,5 +96,11 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence.Repositories
             _context.Inventories.Update(inventory);
             await _context.SaveChangesAsync();
         }
+
+        public async Task UpdateAsync(Inventory inventory)
+        {
+            _context.Inventories.Update(inventory);
+            await _context.SaveChangesAsync();
+        }
     }
 }
