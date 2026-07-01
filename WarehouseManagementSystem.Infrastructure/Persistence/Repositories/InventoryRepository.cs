@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WarehouseManagementSystem.Application.Common.Exceptions;
 using WarehouseManagementSystem.Application.Common.Filters;
 using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Domain.Entities;
@@ -100,7 +101,19 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence.Repositories
         public async Task UpdateAsync(Inventory inventory)
         {
             _context.Inventories.Update(inventory);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // If someone else changed this inventory row concurrently,
+                // we throw a conflict exception to indicate that the update cannot be completed.
+                throw new ConflictException(
+                    "This inventory record was modified by another process. " +
+                    "Please retry.");
+            }
         }
     }
 }

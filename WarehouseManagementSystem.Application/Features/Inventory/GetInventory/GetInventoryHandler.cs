@@ -42,7 +42,14 @@ namespace WarehouseManagementSystem.Application.Features.Inventory.GetInventory
             else if (_currentUser.IsRegionalManager)
             {
                 // RegionalManager can filter by warehouse
-                // but only within their country — enforced in repository
+                // but only within their country — enforced in repository.
+                // A missing Country must never fall through to "no filter",
+                // or a misconfigured RegionalManager would see every
+                // warehouse in every country.
+                if (string.IsNullOrWhiteSpace(_currentUser.Country))
+                    throw new UnauthorizedException(
+                        "Your account has no country assigned. Contact an administrator.");
+
                 filter.WarehouseId = query.WarehouseId;
                 filter.Country = _currentUser.Country;
             }

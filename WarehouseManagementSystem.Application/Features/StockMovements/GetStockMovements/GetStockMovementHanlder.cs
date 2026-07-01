@@ -1,4 +1,5 @@
-﻿using WarehouseManagementSystem.Application.Common.Filters;
+﻿using WarehouseManagementSystem.Application.Common.Exceptions;
+using WarehouseManagementSystem.Application.Common.Filters;
 using WarehouseManagementSystem.Application.Common.Interface;
 using WarehouseManagementSystem.Application.Common.Mapping;
 using WarehouseManagementSystem.Application.Common.Responses;
@@ -42,6 +43,13 @@ namespace WarehouseManagementSystem.Application.Features.StockMovements.GetStock
             }
             else if (_currentUser.IsRegionalManager)
             {
+                // A missing Country must never fall through to "no filter",
+                // or a misconfigured RegionalManager would see every
+                // warehouse in every country.
+                if (string.IsNullOrWhiteSpace(_currentUser.Country))
+                    throw new UnauthorizedException(
+                        "Your account has no country assigned. Contact an administrator.");
+
                 filter.WarehouseId = query.WarehouseId;
                 filter.Country = _currentUser.Country;
             }

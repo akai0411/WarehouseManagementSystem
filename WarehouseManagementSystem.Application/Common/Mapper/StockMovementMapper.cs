@@ -26,13 +26,16 @@ namespace WarehouseManagementSystem.Application.Common.Mapping
         }
 
         public static StockMovement ToEntity(
-            CreateStockMovementCommand command, Guid createdBy)
+            CreateStockMovementCommand command, Guid createdBy, int quantityToRecord)
         {
             return new StockMovement
             {
                 InventoryId = command.InventoryId,
                 Type = Enum.Parse<MovementType>(command.Type),
-                Quantity = command.Quantity,
+                // For Inbound/Outbound this equals command.Quantity.
+                // For Adjustment this is the signed delta applied, not the
+                // raw physical count the caller sent.
+                Quantity = quantityToRecord,
                 Reference = command.Reference,
                 Notes = command.Notes,
                 CreatedBy = createdBy

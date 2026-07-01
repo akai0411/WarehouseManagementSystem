@@ -24,7 +24,6 @@ public static class ProductMapper
     {
         return new Product
         {
-            Id = Guid.NewGuid(),
             Name = command.Name,
             SKU = command.SKU,
             Description = command.Description,

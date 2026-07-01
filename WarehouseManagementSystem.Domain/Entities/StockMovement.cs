@@ -15,7 +15,9 @@ namespace WarehouseManagementSystem.Domain.Entities
         public Inventory Inventory { get; set; } = null!;
         public MovementType Type { get; set; }
 
-        // Always positive — type determines direction
+        // Inbound/Outbound: always positive, Type determines direction.
+        // Adjustment: signed delta actually applied (newCount - previousCount),
+        // so a cycle count can be negative, positive, or zero.
         public int Quantity { get; set; }
 
         // Optional reference e.g. PO number, order number

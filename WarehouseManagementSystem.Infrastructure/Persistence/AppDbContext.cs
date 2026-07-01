@@ -206,6 +206,10 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence
                     .WithMany()
                     .HasForeignKey(e => e.ProductId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
             });
             // Configure the StockMovement entity
             modelBuilder.Entity<StockMovement>(entity =>
