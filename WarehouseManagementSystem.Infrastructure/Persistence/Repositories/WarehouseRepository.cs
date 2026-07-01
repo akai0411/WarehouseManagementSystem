@@ -96,5 +96,11 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence.Repositories
             _context.Warehouses.Update(warehouse);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> HasActiveZonesAsync(Guid warehouseId)
+        {
+            return await _context.Zones
+                .AnyAsync(z => z.WarehouseId == warehouseId && !z.IsDeleted);
+        }
     }
 }
