@@ -52,7 +52,12 @@ namespace WarehouseManagementSystem.Application.Features.StockMovements.CreateSt
                 throw new UnauthorizedException(
                     "Operators are not allowed to register adjustments.");
 
-            // Apply movement to inventory
+            // Apply movement to inventory.
+            // quantityToRecord is what gets written to the movement's audit
+            // trail: for Inbound/Outbound it mirrors the requested quantity,
+            // for Adjustment it's the signed delta actually applied.
+            int quantityToRecord = command.Quantity;
+
             switch (movementType)
             {
                 case MovementType.Inbound:
@@ -68,8 +73,10 @@ namespace WarehouseManagementSystem.Application.Features.StockMovements.CreateSt
                     break;
 
                 case MovementType.Adjustment:
-                    // command.Quantity is the actual physical count
-                    // we store the movement as the difference
+                    // command.Quantity is the actual physical count.
+                    // Record the difference from the previous count so the
+                    // movement history reflects what actually changed.
+                    quantityToRecord = command.Quantity - inventory.Quantity;
                     inventory.Quantity = command.Quantity;
                     break;
             }
@@ -78,7 +85,8 @@ namespace WarehouseManagementSystem.Application.Features.StockMovements.CreateSt
             await _inventoryRepository.UpdateAsync(inventory);
 
             // Create the movement record
-            var movement = StockMovementMapper.ToEntity(command, _currentUser.UserId);
+            var movement = StockMovementMapper.ToEntity(
+                command, _currentUser.UserId, quantityToRecord);
             await _repository.AddAsync(movement);
 
             // Build response with warnings
