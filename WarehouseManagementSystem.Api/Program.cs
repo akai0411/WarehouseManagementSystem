@@ -198,6 +198,15 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+#region Migrations
+// Applies any pending EF Core migrations on startup.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+}
+#endregion
+
 #region Middleware
 app.UseMiddleware<ExceptionMiddleware>();
 #endregion
