@@ -9,15 +9,22 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+        // Product Entities
         public DbSet<Product> Products => Set<Product>();
+        // User Entities
 
         public DbSet<User> Users => Set<User>();
 
         //Warehouse Entities
         public DbSet<Warehouse> Warehouses => Set<Warehouse>();
+        // Zone Entities
         public DbSet<Zone> Zones => Set<Zone>();
+        // Location Entities
         public DbSet<Location> Locations => Set<Location>();
+        // Inventory Entities
         public DbSet<Inventory> Inventories => Set<Inventory>();
+        // Stock Movement Entities
+        public DbSet<StockMovement> StockMovements => Set<StockMovement>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -198,6 +205,32 @@ namespace WarehouseManagementSystem.Infrastructure.Persistence
                 entity.HasOne(e => e.Product)
                     .WithMany()
                     .HasForeignKey(e => e.ProductId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+            // Configure the StockMovement entity
+            modelBuilder.Entity<StockMovement>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Type)
+                    .IsRequired()
+                    .HasConversion<string>();
+
+                entity.Property(e => e.Quantity)
+                    .IsRequired();
+
+                entity.Property(e => e.Reference)
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Notes)
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.CreatedBy)
+                    .IsRequired();
+
+                entity.HasOne(e => e.Inventory)
+                    .WithMany()
+                    .HasForeignKey(e => e.InventoryId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
         }
